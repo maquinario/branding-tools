@@ -2,11 +2,8 @@ import faker from 'faker'
 import { SignUpController } from './SignUp'
 import { MissingParamError, InvalidParamError, ServerError } from '../errors'
 import { EmailValidator } from '../protocols'
-
-interface SutTypes{
-  sut: SignUpController
-  emailValidatorStub: EmailValidator
-}
+import { AddAccount, AddAccountModel } from '../../domain/usecases/AddAccount'
+import { AccountModel } from '../../domain/models/Account'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -17,11 +14,34 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    add (account: AddAccountModel): AccountModel {
+      const fakeAccount = {
+        id: faker.random.uuid(),
+        name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+        email: faker.internet.email(),
+        password: faker.internet.password()
+      }
+
+      return fakeAccount
+    }
+  }
+  return new AddAccountStub()
+}
+
+interface SutTypes{
+  sut: SignUpController
+  emailValidatorStub: EmailValidator
+  addAccountStub: AddAccount
+}
+
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
-  const sut = new SignUpController(emailValidatorStub)
+  const addAccountStub = makeAddAccount()
+  const sut = new SignUpController(emailValidatorStub, addAccountStub)
   return {
-    sut, emailValidatorStub
+    sut, emailValidatorStub, addAccountStub
   }
 }
 
@@ -150,5 +170,26 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('Should call AddAccount with correct values', () => {
+    const { sut, addAccountStub } = makeSut()
+    const addSpy = jest.spyOn(addAccountStub, 'add')
+
+    const userData = {
+      name: faker.name.firstName(),
+      email: faker.internet.email(),
+      password: faker.internet.password()
+    }
+    const httpRequest = {
+      body: {
+        ...userData,
+        passwordConfirmation: userData.password
+      }
+    }
+    sut.handle(httpRequest)
+    const dataSent = { ...httpRequest.body }
+    delete dataSent.passwordConfirmation
+    expect(addSpy).toHaveBeenCalledWith(dataSent)
   })
 })
