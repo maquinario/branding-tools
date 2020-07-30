@@ -209,4 +209,24 @@ describe('SignUp Controller', () => {
     delete dataSent.passwordConfirmation
     expect(addSpy).toHaveBeenCalledWith(dataSent)
   })
+
+  test('Should return 200 if valid data is provided', () => {
+    const { sut } = makeSut()
+
+    const userData = {
+      name: faker.name.firstName(),
+      email: faker.internet.email(),
+      password: faker.internet.password()
+    }
+
+    const httpRequest = {
+      body: {
+        ...userData,
+        passwordConfirmation: userData.password
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toHaveProperty('id')
+  })
 })
