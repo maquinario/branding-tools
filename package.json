@@ -5,8 +5,8 @@
   "author": "Bruno Scodeler <bruno@estudiomaquinario.com.br>",
   "license": "MIT",
   "scripts": {
-    "test": "jest",
-    "test:staged": "jest"
+    "test": "jest --passWithNoTests --watch",
+    "test:staged": "jest --passWithNoTests"
   },
   "devDependencies": {
     "@types/faker": "^4.1.12",
