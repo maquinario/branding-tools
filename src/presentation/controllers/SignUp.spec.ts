@@ -1,8 +1,6 @@
 import faker from 'faker'
 import { SignUpController } from './SignUp'
-import { MissingParamError } from '../errors/MissingParamError'
-import { InvalidParamError } from '../errors/InvalidParamError'
-import { ServerError } from '../errors/ServerError'
+import { MissingParamError, InvalidParamError, ServerError } from '../errors'
 import { EmailValidator } from '../protocols/EmailValidator'
 
 interface SutTypes{
