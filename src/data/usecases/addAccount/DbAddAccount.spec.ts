@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { DbAddAccount } from './DbAddAccount'
-import { Encrypter } from '../../protocols/Encrypter'
+import { Encrypter } from './DbAddAccountProtocols'
 
 interface SutTypes {
   sut: DbAddAccount
