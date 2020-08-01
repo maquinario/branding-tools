@@ -16,16 +16,16 @@ const makeEncrypter = (): Encrypter => {
   }
   return new EncrypterStub()
 }
+const fakeAccount = {
+  id: faker.random.uuid(),
+  name: faker.name.firstName(),
+  email: faker.internet.email(),
+  password: hashedPassword
+}
 
 const makeAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
     async add (account: AddAccountModel): Promise<AccountModel> {
-      const fakeAccount = {
-        id: faker.random.uuid(),
-        name: faker.name.firstName(),
-        email: faker.internet.email(),
-        password: hashedPassword
-      }
       return new Promise((resolve) => resolve(fakeAccount))
     }
   }
@@ -104,5 +104,13 @@ describe('DbAddAccount Usecase', () => {
     }
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return an account on success', async () => {
+    const { sut } = makeSut()
+    const newAccount = { ...fakeAccount }
+    delete newAccount.id
+    const account = await sut.add(newAccount)
+    expect(account).toEqual(fakeAccount)
   })
 })
