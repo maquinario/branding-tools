@@ -23,6 +23,12 @@ const fakeAccount = {
   password: hashedPassword
 }
 
+const makeRequest = (): AccountModel => {
+  const request = { ...fakeAccount }
+  delete request.id
+  return request
+}
+
 const makeAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
     async add (account: AddAccountModel): Promise<AccountModel> {
@@ -53,11 +59,7 @@ describe('DbAddAccount Usecase', () => {
   test('Should call Encrypter with correct password', async () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
-    const accountData = {
-      name: faker.name.firstName(),
-      email: faker.internet.email(),
-      password: faker.internet.password()
-    }
+    const accountData = makeRequest()
     await sut.add(accountData)
     expect(encryptSpy).toHaveBeenCalledWith(accountData.password)
   })
@@ -69,11 +71,7 @@ describe('DbAddAccount Usecase', () => {
       .mockReturnValueOnce(
         new Promise((resolve, reject) => reject(new Error()))
       )
-    const accountData = {
-      name: faker.name.firstName(),
-      email: faker.internet.email(),
-      password: faker.internet.password()
-    }
+    const accountData = makeRequest()
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
   })
@@ -81,11 +79,7 @@ describe('DbAddAccount Usecase', () => {
   test('Should call AddAccountRepository with correct values', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'add')
-    const accountData = {
-      name: faker.name.firstName(),
-      email: faker.internet.email(),
-      password: hashedPassword
-    }
+    const accountData = makeRequest()
     await sut.add(accountData)
     expect(addSpy).toHaveBeenCalledWith(accountData)
   })
@@ -97,19 +91,14 @@ describe('DbAddAccount Usecase', () => {
       .mockReturnValueOnce(
         new Promise((resolve, reject) => reject(new Error()))
       )
-    const accountData = {
-      name: faker.name.firstName(),
-      email: faker.internet.email(),
-      password: hashedPassword
-    }
+    const accountData = makeRequest()
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
   })
 
   test('Should return an account on success', async () => {
     const { sut } = makeSut()
-    const newAccount = { ...fakeAccount }
-    delete newAccount.id
+    const newAccount = makeRequest()
     const account = await sut.add(newAccount)
     expect(account).toEqual(fakeAccount)
   })
