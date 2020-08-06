@@ -1,8 +1,14 @@
-import { Controller, HttpRequest, HttpResponse } from '../../protocols'
+import { Controller, HttpRequest, HttpResponse, EmailValidator } from '../../protocols'
 import { badRequest } from '../../helpers/HttpHelper'
 import { MissingParamError } from '../../errors'
 
 export class LoginController implements Controller {
+  private readonly emailValidator: EmailValidator
+
+  constructor (emailValidator: EmailValidator) {
+    this.emailValidator = emailValidator
+  }
+
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     if (!httpRequest.body.email) {
       return new Promise(resolve => resolve(
@@ -14,5 +20,6 @@ export class LoginController implements Controller {
         badRequest(new MissingParamError('password'))
       ))
     }
+    this.emailValidator.isValid(httpRequest.body.email)
   }
 }
