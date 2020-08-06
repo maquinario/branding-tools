@@ -2,12 +2,14 @@ import faker from 'faker'
 import { LoginController } from './Login'
 import { badRequest } from '../../helpers/HttpHelper'
 import { MissingParamError, InvalidParamError } from '../../errors'
-import { EmailValidator } from '../../protocols'
+import { EmailValidator, HttpRequest } from '../../protocols'
 
-const loginInfo = {
-  email: faker.internet.email(),
-  password: faker.internet.password()
-}
+const makeRequest = (): HttpRequest => ({
+  body: {
+    email: faker.internet.email(),
+    password: faker.internet.password()
+  }
+})
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -37,7 +39,7 @@ describe('Login controller', () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        password: loginInfo.password
+        password: faker.internet.password()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -48,7 +50,7 @@ describe('Login controller', () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        email: loginInfo.email
+        email: faker.internet.email()
       }
     }
     const httpResponse = await sut.handle(httpRequest)
@@ -58,9 +60,7 @@ describe('Login controller', () => {
   test('Should return 400 if an invalid email is provided', async () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
-    const httpRequest = {
-      body: loginInfo
-    }
+    const httpRequest = makeRequest()
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('email')))
   })
@@ -68,10 +68,8 @@ describe('Login controller', () => {
   test('Should call EmailValidator with correct email', async () => {
     const { sut, emailValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
-    const httpRequest = {
-      body: loginInfo
-    }
+    const httpRequest = makeRequest()
     await sut.handle(httpRequest)
-    expect(isValidSpy).toHaveBeenCalledWith(loginInfo.email)
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email)
   })
 })
