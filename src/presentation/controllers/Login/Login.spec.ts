@@ -8,9 +8,20 @@ const loginInfo = {
   password: faker.internet.password()
 }
 
+interface SutTypes {
+  sut: LoginController
+}
+
+const makeSut = (): SutTypes => {
+  const sut = new LoginController()
+  return {
+    sut
+  }
+}
+
 describe('Login controller', () => {
   test('Should return 400 if no email is provided', async () => {
-    const sut = new LoginController()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         password: loginInfo.password
@@ -21,7 +32,7 @@ describe('Login controller', () => {
   })
 
   test('Should return 400 if no password is provided', async () => {
-    const sut = new LoginController()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         email: loginInfo.email
