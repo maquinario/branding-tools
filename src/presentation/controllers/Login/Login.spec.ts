@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { LoginController } from './Login'
-import { badRequest, serverError } from '../../helpers/HttpHelper'
+import { badRequest, serverError, unauthorized } from '../../helpers/HttpHelper'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { EmailValidator, HttpRequest } from '../../protocols'
 import { Authentication } from '../../../domain/usecases/Authentication'
@@ -101,5 +101,14 @@ describe('Login controller', () => {
     const httpRequest = makeRequest()
     await sut.handle(httpRequest)
     expect(authSpy).toHaveBeenCalledWith(httpRequest.body.email, httpRequest.body.password)
+  })
+
+  test('Should return 401 if credentials are invalid', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(
+      new Promise(resolve => resolve(null))
+    )
+    const httpResponse = await sut.handle(makeRequest())
+    expect(httpResponse).toEqual(unauthorized())
   })
 })
