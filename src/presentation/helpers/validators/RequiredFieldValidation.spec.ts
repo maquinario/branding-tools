@@ -2,16 +2,20 @@ import { RequiredFieldValidation } from './RequiredFieldValidation'
 import faker from 'faker'
 import { MissingParamError } from '../../errors'
 
+const fieldName = faker.database.column()
+
+const makeSut = (): RequiredFieldValidation => {
+  return new RequiredFieldValidation(fieldName)
+}
+
 describe('RequiredField Validation', () => {
   test('Should return a MissingParamError if validation fails', () => {
-    const fieldName = faker.database.column()
-    const sut = new RequiredFieldValidation(fieldName)
+    const sut = makeSut()
     const error = sut.validate({ name: faker.random.word() })
     expect(error).toEqual(new MissingParamError(fieldName))
   })
   test('Should not return if validation succeeds', () => {
-    const fieldName = faker.database.column()
-    const sut = new RequiredFieldValidation(fieldName)
+    const sut = makeSut()
     const field = {}
     field[fieldName] = faker.random.word()
     const error = sut.validate(field)
