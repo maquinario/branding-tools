@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { LoginController } from './Login'
-import { badRequest, serverError, unauthorized, ok } from '../../helpers/HttpHelper'
+import { badRequest, serverError, unauthorized, ok } from '../../helpers/Http/HttpHelper'
 import { MissingParamError } from '../../errors'
 import { HttpRequest, Authentication, Validation } from './LoginProtocols'
 

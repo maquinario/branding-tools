@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { LogControllerDecorator } from './Log'
 import { HttpRequest, HttpResponse, Controller } from '../../presentation/protocols'
-import { serverError, ok } from '../../presentation/helpers/HttpHelper'
+import { serverError, ok } from '../../presentation/helpers/Http/HttpHelper'
 import { LogErrorRepository } from '../../data/protocols/LogErrorRepository'
 import { AccountModel } from '../../domain/models/Account'
 

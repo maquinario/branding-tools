@@ -10,7 +10,7 @@ import {
   AddAccountModel,
   Validation
 } from './SignUpProtocols'
-import { ok, badRequest, serverError } from '../../helpers/HttpHelper'
+import { ok, badRequest, serverError } from '../../helpers/Http/HttpHelper'
 import { HttpRequest } from '../../protocols'
 
 const account = {
