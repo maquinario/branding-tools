@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { LoginController } from './Login'
-import { badRequest, serverError, unauthorized } from '../../helpers/HttpHelper'
+import { badRequest, serverError, unauthorized, ok } from '../../helpers/HttpHelper'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { EmailValidator, HttpRequest, Authentication } from './LoginProtocols'
 
@@ -20,10 +20,11 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub()
 }
 
+const fakeToken = faker.random.alphaNumeric(45)
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
     async auth (email: string, password: string): Promise<string> {
-      return new Promise(resolve => resolve(faker.random.alphaNumeric(45)))
+      return new Promise(resolve => resolve(fakeToken))
     }
   }
   return new AuthenticationStub()
@@ -123,6 +124,6 @@ describe('Login controller', () => {
   test('Should return 200 if credentials are valid', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeRequest())
-    expect(httpResponse).toEqual(ok())
+    expect(httpResponse).toEqual(ok({ accessToken: fakeToken }))
   })
 })
