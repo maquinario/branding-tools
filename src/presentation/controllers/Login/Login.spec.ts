@@ -2,8 +2,7 @@ import faker from 'faker'
 import { LoginController } from './Login'
 import { badRequest, serverError, unauthorized } from '../../helpers/HttpHelper'
 import { MissingParamError, InvalidParamError } from '../../errors'
-import { EmailValidator, HttpRequest } from '../../protocols'
-import { Authentication } from '../../../domain/usecases/Authentication'
+import { EmailValidator, HttpRequest, Authentication } from './LoginProtocols'
 
 const makeRequest = (): HttpRequest => ({
   body: {
@@ -110,5 +109,14 @@ describe('Login controller', () => {
     )
     const httpResponse = await sut.handle(makeRequest())
     expect(httpResponse).toEqual(unauthorized())
+  })
+
+  test('Should return 500 if Authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
