@@ -2,10 +2,12 @@ import faker from 'faker'
 import bcrypt from 'bcrypt'
 import { BcryptAdapter } from './BcryptAdapter'
 
-const hashString = faker.random.alphaNumeric(36)
+const password = faker.internet.password()
+const hash = faker.random.alphaNumeric(24)
+
 jest.mock('bcrypt', () => ({
   async hash (): Promise<string> {
-    return new Promise(resolve => resolve(hashString))
+    return new Promise(resolve => resolve(hash))
   },
   async compare (): Promise<boolean> {
     return new Promise(resolve => resolve(true))
@@ -21,7 +23,6 @@ describe('Bcrypt Adapter', () => {
   test('Should call hash with correct values', async () => {
     const sut = makeSut()
     const hashSpy = jest.spyOn(bcrypt, 'hash')
-    const password = faker.internet.password()
     await sut.hash(password)
     expect(hashSpy).toHaveBeenCalledWith(password, salt)
   })
@@ -30,7 +31,7 @@ describe('Bcrypt Adapter', () => {
     const sut = makeSut()
     const password = faker.internet.password()
     const hash = await sut.hash(password)
-    expect(hash).toBe(hashString)
+    expect(hash).toBe(hash)
   })
 
   test('Should throw if hash throws', async () => {
@@ -44,16 +45,12 @@ describe('Bcrypt Adapter', () => {
   test('Should call compare with correct values', async () => {
     const sut = makeSut()
     const compareSpy = jest.spyOn(bcrypt, 'compare')
-    const password = faker.internet.password()
-    const hashedPassword = faker.random.alphaNumeric(24)
-    await sut.compare(password, hashedPassword)
-    expect(compareSpy).toHaveBeenCalledWith(password, hashedPassword)
+    await sut.compare(password, hash)
+    expect(compareSpy).toHaveBeenCalledWith(password, hash)
   })
 
   test('Should return true when compare succeeds', async () => {
     const sut = makeSut()
-    const password = faker.internet.password()
-    const hash = faker.random.alphaNumeric(24)
     const isValid = await sut.compare(password, hash)
     expect(isValid).toBe(true)
   })
@@ -63,8 +60,6 @@ describe('Bcrypt Adapter', () => {
     jest.spyOn(bcrypt, 'compare').mockReturnValueOnce(
       new Promise(resolve => resolve(false))
     )
-    const password = faker.internet.password()
-    const hash = faker.random.alphaNumeric(24)
     const isValid = await sut.compare(password, hash)
     expect(isValid).toBe(false)
   })
@@ -74,8 +69,6 @@ describe('Bcrypt Adapter', () => {
     jest.spyOn(bcrypt, 'compare').mockReturnValueOnce(
       new Promise((resolve, reject) => reject(new Error()))
     )
-    const password = faker.internet.password()
-    const hash = faker.random.alphaNumeric(24)
     const promise = sut.compare(password, hash)
     await expect(promise).rejects.toThrow()
   })
