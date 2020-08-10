@@ -1,6 +1,6 @@
 import { SignUpController } from '../../../presentation/controllers/SignUp/SignUp'
 import { DbAddAccount } from '../../../data/usecases/addAccount/DbAddAccount'
-import { BcryptAdapter } from '../../../infra/cryptography/BcryptAdapter'
+import { BcryptAdapter } from '../../../infra/cryptography/BcryptAdapter/BcryptAdapter'
 import { AccountMongoRepository } from '../../../infra/db/mongodb/AccountRepository/Account'
 import { LogControllerDecorator } from '../../decorators/Log'
 import { Controller } from '../../../presentation/protocols'
