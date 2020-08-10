@@ -6,6 +6,9 @@ const hashString = faker.random.alphaNumeric(36)
 jest.mock('bcrypt', () => ({
   async hash (): Promise<string> {
     return new Promise(resolve => resolve(hashString))
+  },
+  async compare (): Promise<boolean> {
+    return new Promise(resolve => resolve(true))
   }
 }))
 
@@ -15,7 +18,7 @@ const makeSut = (): BcryptAdapter => {
 }
 
 describe('Bcrypt Adapter', () => {
-  test('Should call bcrypt with correct values', async () => {
+  test('Should call hash with correct values', async () => {
     const sut = makeSut()
     const hashSpy = jest.spyOn(bcrypt, 'hash')
     const password = faker.internet.password()
@@ -23,18 +26,27 @@ describe('Bcrypt Adapter', () => {
     expect(hashSpy).toHaveBeenCalledWith(password, salt)
   })
 
-  test('Should return a hash on success', async () => {
+  test('Should return a valid hash on hash success', async () => {
     const sut = makeSut()
     const password = faker.internet.password()
     const hash = await sut.hash(password)
     expect(hash).toBe(hashString)
   })
 
-  test('Should throw if bcrypt throws', async () => {
+  test('Should throw if hash throws', async () => {
     const sut = makeSut()
     jest.spyOn(bcrypt, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const password = faker.internet.password()
     const promise = sut.hash(password)
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call compare with correct values', async () => {
+    const sut = makeSut()
+    const compareSpy = jest.spyOn(bcrypt, 'compare')
+    const password = faker.internet.password()
+    const hashedPassword = faker.random.alphaNumeric(24)
+    await sut.compare(password, hashedPassword)
+    expect(compareSpy).toHaveBeenCalledWith(password, hashedPassword)
   })
 })
