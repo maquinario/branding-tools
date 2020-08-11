@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { SignUpController } from './SignUp'
+import { SignUpController } from './SignUpController'
 import {
   MissingParamError,
   ServerError
@@ -9,7 +9,7 @@ import {
   AddAccount,
   AddAccountModel,
   Validation
-} from './SignUpProtocols'
+} from './SignUpControllerProtocols'
 import { ok, badRequest, serverError } from '../../helpers/Http/HttpHelper'
 import { HttpRequest } from '../../protocols'
 

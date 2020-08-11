@@ -1,8 +1,8 @@
 import {
   Authentication,
+  AuthenticationModel,
   LoadAccountByEmailRepository,
   UpdateAccessTokenRepository,
-  AuthenticationModel,
   HashComparer,
   Encrypter
 } from './DbAuthenticationProtocols'

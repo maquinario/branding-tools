@@ -1,4 +1,4 @@
-import { makeLoginValidation } from './LoginValidation'
+import { makeLoginValidation } from './LoginValidationFactory'
 import { ValidationComposite, EmailValidation, RequiredFieldValidation } from '../../../presentation/helpers/validators'
 import { Validation } from '../../../presentation/protocols/Validation'
 import { EmailValidator } from '../../../presentation/protocols'

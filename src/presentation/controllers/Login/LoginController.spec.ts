@@ -1,8 +1,8 @@
 import faker from 'faker'
-import { LoginController } from './Login'
+import { LoginController } from './LoginController'
 import { badRequest, serverError, unauthorized, ok } from '../../helpers/Http/HttpHelper'
 import { MissingParamError } from '../../errors'
-import { HttpRequest, Authentication, Validation } from './LoginProtocols'
+import { HttpRequest, Authentication, Validation } from './LoginControllerProtocols'
 import { AuthenticationModel } from '../../../domain/usecases/Authentication'
 
 const makeRequest = (): HttpRequest => ({

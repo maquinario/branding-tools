@@ -1,8 +1,8 @@
-import { AddAccountRepository } from '../../../../data/protocols/db/AddAccountRepository'
+import { AddAccountRepository } from '../../../../data/protocols/db/Account/AddAccountRepository'
 import { AddAccountModel } from '../../../../domain/usecases/AddAccount'
 import { AccountModel } from '../../../../domain/models/Account'
 import { MongoHelper } from '../helpers/MongoHelper'
-import { LoadAccountByEmailRepository } from '../../../../data/protocols/db/LoadAccountByEmailRepository'
+import { LoadAccountByEmailRepository } from '../../../../data/protocols/db/Account/LoadAccountByEmailRepository'
 
 export class AccountMongoRepository
 implements AddAccountRepository, LoadAccountByEmailRepository {
