@@ -5,7 +5,9 @@
   "author": "Bruno Scodeler <bruno@estudiomaquinario.com.br>",
   "license": "MIT",
   "scripts": {
-    "start": "sucrase-node src/main/server.ts",
+    "start": "node dist/main/server.js",
+    "build": "rimraf dist && tsc",
+    "dev": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "yarn test --watch -c jest-unit-config.js",
@@ -36,6 +38,7 @@
     "husky": "^4.2.5",
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
+    "rimraf": "^3.0.2",
     "sucrase": "^3.15.0",
     "supertest": "^4.0.2",
     "ts-jest": "^26.1.4",
