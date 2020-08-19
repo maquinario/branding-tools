@@ -2,7 +2,8 @@ import faker from 'faker'
 import { SignUpController } from './SignUpController'
 import {
   MissingParamError,
-  ServerError
+  ServerError,
+  EmailExistsError
 } from '../../errors'
 import {
   AccountModel,
@@ -12,7 +13,7 @@ import {
   Authentication,
   AuthenticationModel
 } from './SignUpControllerProtocols'
-import { ok, badRequest, serverError } from '../../helpers/Http/HttpHelper'
+import { ok, badRequest, serverError, forbidden } from '../../helpers/Http/HttpHelper'
 import { HttpRequest } from '../../protocols'
 
 const account = {
@@ -112,6 +113,15 @@ describe('SignUp Controller', () => {
     await sut.handle(request)
     delete request.body.passwordConfirmation
     expect(addSpy).toHaveBeenCalledWith(request.body)
+  })
+
+  test('Should return 403 if addAccount returns null', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockReturnValueOnce(
+      new Promise(resolve => resolve(null))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new EmailExistsError()))
   })
 
   test('Should return 200 if valid data is provided', async () => {
