@@ -1,14 +1,21 @@
-import { HttpRequest, AddSurvey, AddSurveyModel, Validation } from './AddSurveyControllerProtocols'
+import {
+  HttpRequest,
+  AddSurvey,
+  AddSurveyModel,
+  Validation
+} from './AddSurveyControllerProtocols'
 import { AddSurveyController } from './AddSurveyController'
-import { badRequest } from '../../../helpers/Http/HttpHelper'
+import { badRequest, serverError } from '../../../helpers/Http/HttpHelper'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     question: 'any_question',
-    answers: [{
-      image: 'any_image',
-      answer: 'any_answer'
-    }]
+    answers: [
+      {
+        image: 'any_image',
+        answer: 'any_answer'
+      }
+    ]
   }
 })
 
@@ -24,7 +31,7 @@ const makeValidation = (): Validation => {
 const makeAddSurvey = (): AddSurvey => {
   class AddSurveyStub implements AddSurvey {
     async add (data: AddSurveyModel): Promise<void> {
-      return new Promise(resolve => resolve())
+      return new Promise((resolve) => resolve())
     }
   }
   return new AddSurveyStub()
@@ -41,7 +48,9 @@ const makeSut = (): SutTypes => {
   const addSurveyStub = makeAddSurvey()
   const sut = new AddSurveyController(validationStub, addSurveyStub)
   return {
-    sut, validationStub, addSurveyStub
+    sut,
+    validationStub,
+    addSurveyStub
   }
 }
 
@@ -60,11 +69,23 @@ describe('AddSurveyController', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
   })
+
   test('Should call AddSurvey with correct values', async () => {
     const { sut, addSurveyStub } = makeSut()
     const addSpy = jest.spyOn(addSurveyStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should return 500 if AddSurvey throws', async () => {
+    const { sut, addSurveyStub } = makeSut()
+    jest
+      .spyOn(addSurveyStub, 'add')
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => reject(new Error()))
+      )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
