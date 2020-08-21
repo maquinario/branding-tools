@@ -4,7 +4,7 @@ import {
   MissingParamError,
   ServerError,
   EmailExistsError
-} from '../../errors'
+} from '../../../errors'
 import {
   AccountModel,
   AddAccount,
@@ -13,8 +13,8 @@ import {
   Authentication,
   AuthenticationModel
 } from './SignUpControllerProtocols'
-import { ok, badRequest, serverError, forbidden } from '../../helpers/Http/HttpHelper'
-import { HttpRequest } from '../../protocols'
+import { ok, badRequest, serverError, forbidden } from '../../../helpers/Http/HttpHelper'
+import { HttpRequest } from '../../../protocols'
 
 const account = {
   id: faker.random.uuid(),
