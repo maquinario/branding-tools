@@ -10,7 +10,8 @@ describe('Accoung Mongo Repository', () => {
   const accountData = {
     name: `${faker.name.firstName()} ${faker.name.lastName()}`,
     email: faker.internet.email(),
-    password: faker.internet.password()
+    password: faker.internet.password(),
+    accessToken: faker.random.alphaNumeric(35)
   }
 
   beforeAll(async () => {
@@ -41,6 +42,7 @@ describe('Accoung Mongo Repository', () => {
       expect(account.password).toBe(accountData.password)
     })
   })
+
   describe('loadByEmail()', () => {
     test('Should return an account on loadByEmail success', async () => {
       const sut = makeSut()
@@ -59,10 +61,12 @@ describe('Accoung Mongo Repository', () => {
       expect(account).toBeFalsy()
     })
   })
+
   describe('updateAccessToken()', () => {
     test('Should update account accessToken on updateAccessToken success', async () => {
       const sut = makeSut()
-      const res = await accountCollection.insertOne(accountData)
+      const { name, email, password } = accountData
+      const res = await accountCollection.insertOne({ name, email, password })
       const fakeAccount = res.ops[0]
       expect(fakeAccount.accessToken).toBeFalsy()
       const token = faker.random.alphaNumeric(36)
@@ -70,6 +74,19 @@ describe('Accoung Mongo Repository', () => {
       const account = await accountCollection.findOne({ _id: fakeAccount._id })
       expect(account).toBeTruthy()
       expect(account.accessToken).toBe(token)
+    })
+  })
+
+  describe('loadByToken()', () => {
+    test('Should return an account on loadByEmail without role', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne(accountData)
+      const account = await sut.loadByToken(accountData.accessToken)
+      expect(account).toBeTruthy()
+      expect(account.id).toBeTruthy()
+      expect(account.name).toBe(accountData.name)
+      expect(account.email).toBe(accountData.email)
+      expect(account.password).toBe(accountData.password)
     })
   })
 })
