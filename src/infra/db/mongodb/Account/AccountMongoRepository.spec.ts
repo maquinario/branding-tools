@@ -11,7 +11,8 @@ describe('Accoung Mongo Repository', () => {
     name: `${faker.name.firstName()} ${faker.name.lastName()}`,
     email: faker.internet.email(),
     password: faker.internet.password(),
-    accessToken: faker.random.alphaNumeric(35)
+    accessToken: faker.random.alphaNumeric(35),
+    role: faker.name.jobType()
   }
 
   beforeAll(async () => {
@@ -80,8 +81,20 @@ describe('Accoung Mongo Repository', () => {
   describe('loadByToken()', () => {
     test('Should return an account on loadByEmail without role', async () => {
       const sut = makeSut()
-      await accountCollection.insertOne(accountData)
+      const { name, email, password, accessToken } = accountData
+      await accountCollection.insertOne({ name, email, password, accessToken })
       const account = await sut.loadByToken(accountData.accessToken)
+      expect(account).toBeTruthy()
+      expect(account.id).toBeTruthy()
+      expect(account.name).toBe(accountData.name)
+      expect(account.email).toBe(accountData.email)
+      expect(account.password).toBe(accountData.password)
+    })
+
+    test('Should return an account on loadByEmail with role', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne(accountData)
+      const account = await sut.loadByToken(accountData.accessToken, accountData.role)
       expect(account).toBeTruthy()
       expect(account.id).toBeTruthy()
       expect(account.name).toBe(accountData.name)
