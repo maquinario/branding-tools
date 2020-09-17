@@ -12,7 +12,7 @@ describe('Accoung Mongo Repository', () => {
     email: faker.internet.email(),
     password: faker.internet.password(),
     accessToken: faker.random.alphaNumeric(35),
-    role: faker.name.jobType()
+    role: 'admin'
   }
 
   beforeAll(async () => {
@@ -91,7 +91,7 @@ describe('Accoung Mongo Repository', () => {
       expect(account.password).toBe(accountData.password)
     })
 
-    test('Should return an account on loadByToken with role', async () => {
+    test('Should return an account on loadByToken with admin role', async () => {
       const sut = makeSut()
       await accountCollection.insertOne(accountData)
       const account = await sut.loadByToken(accountData.accessToken, accountData.role)
@@ -102,10 +102,29 @@ describe('Accoung Mongo Repository', () => {
       expect(account.password).toBe(accountData.password)
     })
 
+    test('Should return null if role is invalid', async () => {
+      const sut = makeSut()
+      const newAccount = { ...accountData, role: faker.name.jobTitle() }
+      await accountCollection.insertOne(newAccount)
+      const account = await sut.loadByToken(newAccount.accessToken, faker.name.jobTitle())
+      expect(account).toBe(null)
+    })
+
     test('Should return null if loadByToken fails', async () => {
       const sut = makeSut()
       const account = await sut.loadByToken(accountData.accessToken)
       expect(account).toBeFalsy()
+    })
+
+    test('Should return an account on loadByToken if user is admin', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne(accountData)
+      const account = await sut.loadByToken(accountData.accessToken)
+      expect(account).toBeTruthy()
+      expect(account.id).toBeTruthy()
+      expect(account.name).toBe(accountData.name)
+      expect(account.email).toBe(accountData.email)
+      expect(account.password).toBe(accountData.password)
     })
   })
 })
