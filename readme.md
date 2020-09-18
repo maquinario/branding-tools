@@ -10,7 +10,7 @@ Also this is an exercise to improve our Typescript skills, using Clean Architect
 - [x] 👤 Sign up
 - [x] 🔒 Login
 - [x] 📝Create survey
-- [ ] 📁 List surveys
+- [x] 📁 List surveys
 - [ ] 💬 Answer survey
 - [ ] 📊 Survey results
 
