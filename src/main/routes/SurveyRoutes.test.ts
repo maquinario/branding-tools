@@ -15,6 +15,16 @@ const accountData = {
   password: faker.internet.password()
 }
 
+const makeAccessToken = async (): Promise<string> => {
+  const { name, email, password } = accountData
+  const res = await accountCollection.insertOne({ name, email, password, role: 'admin' })
+  const id = res.ops[0]._id
+  const accessToken = sign({ id }, env.jwtSecret)
+  console.log(accessToken)
+  await accountCollection.updateOne({ _id: id }, { $set: { accessToken } })
+  return accessToken
+}
+
 describe('Survey Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL)
@@ -48,13 +58,7 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 204 if valid token is provided', async () => {
-      const { name, email, password } = accountData
-      const res = await accountCollection.insertOne({ name, email, password, role: 'admin' })
-      const id = res.ops[0]._id
-      const accessToken = sign({ id }, env.jwtSecret)
-      console.log(accessToken)
-      await accountCollection.updateOne({ _id: id }, { $set: { accessToken } })
-
+      const accessToken = await makeAccessToken()
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', accessToken)
@@ -78,29 +82,12 @@ describe('Survey Routes', () => {
         .expect(403)
     })
 
-    test('Should return 200 on LoadSurveys if valid token is provided', async () => {
-      const { name, email, password } = accountData
-      const res = await accountCollection.insertOne({ name, email, password })
-      const id = res.ops[0]._id
-      const accessToken = sign({ id }, env.jwtSecret)
-      console.log(accessToken)
-      await accountCollection.updateOne({ _id: id }, { $set: { accessToken } })
-
-      await surveyCollection.insertMany([{
-        question: 'any_question',
-        answers: [
-          {
-            image: 'any_image',
-            answer: 'any_answer'
-          }
-        ],
-        date: new Date()
-      }])
-
+    test('Should return 204 on LoadSurveys if valid token is provided', async () => {
+      const accessToken = await makeAccessToken()
       await request(app)
         .get('/api/surveys')
         .set('x-access-token', accessToken)
-        .expect(200)
+        .expect(204)
     })
   })
 })
