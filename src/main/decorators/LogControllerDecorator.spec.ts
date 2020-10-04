@@ -5,7 +5,7 @@ import { serverError, ok } from '@/presentation/helpers/Http/HttpHelper'
 import { LogErrorRepository } from '@/data/protocols/db/Log/LogErrorRepository'
 import { AccountModel } from '@/domain/models/Account'
 
-interface SutTypes{
+type SutTypes = {
   sut: LogControllerDecorator
   controllerStub: Controller
   logErrorRepositoryStub: LogErrorRepository
