@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { EmailValidation } from './EmailValidation'
-import { InvalidParamError } from '../../presentation/errors'
-import { EmailValidator } from '../protocols/EmailValidator'
+import { InvalidParamError } from '@/presentation/errors'
+import { EmailValidator } from '@/validation/protocols/EmailValidator'
 
 const email = faker.internet.email()
 

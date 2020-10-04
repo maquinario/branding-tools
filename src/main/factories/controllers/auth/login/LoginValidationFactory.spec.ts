@@ -3,8 +3,8 @@ import {
   ValidationComposite,
   EmailValidation,
   RequiredFieldValidation
-} from '../../../../../validation/validators'
-import { Validation, EmailValidator } from '../../../../../presentation/protocols'
+} from '@/validation/validators'
+import { Validation, EmailValidator } from '@/presentation/protocols'
 
 jest.mock('../../../../../validation/validators/ValidationComposite')
 

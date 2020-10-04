@@ -1,7 +1,7 @@
 import request from 'supertest'
 import app from '../config/App'
 import faker from 'faker'
-import { MongoHelper } from '../../infra/db/mongodb/helpers/MongoHelper'
+import { MongoHelper } from '@/infra/db/mongodb/helpers/MongoHelper'
 import { Collection } from 'mongodb'
 import { sign } from 'jsonwebtoken'
 import env from '../config/Env'
