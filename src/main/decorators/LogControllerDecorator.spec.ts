@@ -1,9 +1,9 @@
 import faker from 'faker'
 import { LogControllerDecorator } from './LogControllerDecorator'
-import { HttpRequest, HttpResponse, Controller } from '../../presentation/protocols'
-import { serverError, ok } from '../../presentation/helpers/Http/HttpHelper'
-import { LogErrorRepository } from '../../data/protocols/db/Log/LogErrorRepository'
-import { AccountModel } from '../../domain/models/Account'
+import { HttpRequest, HttpResponse, Controller } from '@/presentation/protocols'
+import { serverError, ok } from '@/presentation/helpers/Http/HttpHelper'
+import { LogErrorRepository } from '@/data/protocols/db/Log/LogErrorRepository'
+import { AccountModel } from '@/domain/models/Account'
 
 interface SutTypes{
   sut: LogControllerDecorator

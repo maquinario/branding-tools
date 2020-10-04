@@ -5,7 +5,7 @@ import {
   Validation
 } from './AddSurveyControllerProtocols'
 import { AddSurveyController } from './AddSurveyController'
-import { badRequest, serverError, noContent } from '../../../helpers/Http/HttpHelper'
+import { badRequest, serverError, noContent } from '@/presentation/helpers/Http/HttpHelper'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {

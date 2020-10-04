@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { RequiredFieldValidation } from './RequiredFieldValidation'
-import { MissingParamError } from '../../presentation/errors'
+import { MissingParamError } from '@/presentation/errors'
 
 const fieldName = faker.database.column()
 
